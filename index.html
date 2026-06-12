@@ -15,7 +15,9 @@
 <body>
 
 <header>
-    <h1>LSTM Language Model</h1>
+
+    <h1>LSTM Language Model zur Wortvorhersage</h1>
+
 </header>
 
 <main>
@@ -24,29 +26,127 @@
 
         <h2>Training</h2>
 
-        <p>
-            Modell wird hier trainiert.
+        <p id="training-status">
+            Modell noch nicht trainiert.
         </p>
 
+        <div id="loss-plot"></div>
+
     </section>
+
 
     <section>
 
         <h2>Wortvorhersage</h2>
 
-        <p>
-            Vorhersagen werden hier angezeigt.
-        </p>
+        <label for="prompt-input">
+            Text eingeben:
+        </label>
+
+        <textarea
+                id="prompt-input"
+                rows="4"
+                placeholder="Text eingeben..."
+        ></textarea>
+
+        <div class="button-row">
+
+            <button id="predict-button">
+                Vorhersage
+            </button>
+
+            <button id="next-button">
+                Weiter
+            </button>
+
+            <button id="auto-button">
+                Auto
+            </button>
+
+            <button id="stop-button">
+                Stopp
+            </button>
+
+            <button id="reset-button">
+                Reset
+            </button>
+
+        </div>
+
+        <h3>Vorhergesagte Wörter</h3>
+
+        <div id="prediction-output">
+
+        </div>
 
     </section>
+
 
     <section>
 
         <h2>Resultate</h2>
 
-        <p>
-            Ergebnisse werden hier dargestellt.
-        </p>
+        <div class="result-box">
+
+            <p>
+                Top-1 Accuracy:
+                <span id="accuracy-1">-</span>
+            </p>
+
+            <p>
+                Top-5 Accuracy:
+                <span id="accuracy-5">-</span>
+            </p>
+
+            <p>
+                Top-10 Accuracy:
+                <span id="accuracy-10">-</span>
+            </p>
+
+            <p>
+                Top-20 Accuracy:
+                <span id="accuracy-20">-</span>
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <section>
+
+        <h2>Diskussion</h2>
+
+        <div class="text-box">
+
+            <p>
+                Diskussion folgt nach Durchführung der Experimente.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <section>
+
+        <h2>Dokumentation</h2>
+
+        <div class="text-box">
+
+            <h3>Technisch</h3>
+
+            <p>
+                Dokumentation wird später ergänzt.
+            </p>
+
+            <h3>Fachlich</h3>
+
+            <p>
+                Dokumentation wird später ergänzt.
+            </p>
+
+        </div>
 
     </section>
 
