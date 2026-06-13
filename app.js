@@ -9,6 +9,8 @@ let wordToIndex = {};
 
 let indexToWord = {};
 
+const sequenceLength = 3;
+
 
 // Text bereinigen
 
@@ -65,44 +67,153 @@ function createDictionary(words) {
 }
 
 
+// One-Hot-Vektor erzeugen
+
+function createOneHotVector(index) {
+
+    const vector = [];
+
+    for (let i = 0; i < dictionary.length; i++) {
+
+        if (i === index) {
+
+            vector.push(1);
+
+        } else {
+
+            vector.push(0);
+        }
+    }
+
+    return vector;
+}
+
+
+// Trainingsdaten erzeugen
+
+function createTrainingData(words) {
+
+    const inputs = [];
+
+    const labels = [];
+
+    for (
+        let i = 0;
+        i < words.length - sequenceLength;
+        i++
+    ) {
+
+        const inputWords =
+            words.slice(
+                i,
+                i + sequenceLength
+            );
+
+        const targetWord =
+            words[i + sequenceLength];
+
+        const inputSequence = [];
+
+        for (const word of inputWords) {
+
+            const index =
+                wordToIndex[word];
+
+            inputSequence.push(
+                createOneHotVector(index)
+            );
+        }
+
+        const targetIndex =
+            wordToIndex[targetWord];
+
+        const targetVector =
+            createOneHotVector(targetIndex);
+
+        inputs.push(inputSequence);
+
+        labels.push(targetVector);
+    }
+
+    return {
+
+        inputs: inputs,
+
+        labels: labels
+    };
+}
+
+
 // Trainingstext vorbereiten
 
 function prepareTrainingText() {
 
-    const text = document
-        .getElementById("prompt-input")
-        .value;
+    const text =
+        document
+            .getElementById("prompt-input")
+            .value;
 
-    const words = splitIntoWords(text);
+    const words =
+        splitIntoWords(text);
 
     createDictionary(words);
 
-    console.log("Anzahl Wörter:", words.length);
+    const trainingData =
+        createTrainingData(words);
 
-    console.log("Dictionary:", dictionary);
+    console.log(
+        "Anzahl Wörter:",
+        words.length
+    );
 
-    console.log("wordToIndex:", wordToIndex);
+    console.log(
+        "Dictionary:",
+        dictionary
+    );
 
-    console.log("indexToWord:", indexToWord);
+    console.log(
+        "wordToIndex:",
+        wordToIndex
+    );
+
+    console.log(
+        "indexToWord:",
+        indexToWord
+    );
+
+    console.log(
+        "Trainingsdaten:",
+        trainingData
+    );
 }
 
 
 // Buttons
 
 const predictButton =
-    document.getElementById("predict-button");
+    document.getElementById(
+        "predict-button"
+    );
 
 const nextButton =
-    document.getElementById("next-button");
+    document.getElementById(
+        "next-button"
+    );
 
 const autoButton =
-    document.getElementById("auto-button");
+    document.getElementById(
+        "auto-button"
+    );
 
 const stopButton =
-    document.getElementById("stop-button");
+    document.getElementById(
+        "stop-button"
+    );
 
 const resetButton =
-    document.getElementById("reset-button");
+    document.getElementById(
+        "reset-button"
+    );
 
 
 // Vorhersage
@@ -116,7 +227,7 @@ predictButton.addEventListener(
         prepareTrainingText();
 
         console.log(
-            "Textvorverarbeitung abgeschlossen"
+            "Trainingssequenzen erstellt"
         );
     }
 );
