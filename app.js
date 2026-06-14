@@ -1,6 +1,7 @@
 console.log("Projekt gestartet");
 
 console.log("TensorFlow.js geladen:", tf);
+
 console.log("Plotly geladen:", Plotly);
 
 let dictionary = [];
@@ -8,6 +9,8 @@ let dictionary = [];
 let wordToIndex = {};
 
 let indexToWord = {};
+
+let model;
 
 const sequenceLength = 3;
 
@@ -54,6 +57,7 @@ function createDictionary(words) {
     }
 
     wordToIndex = {};
+
     indexToWord = {};
 
     for (let i = 0; i < dictionary.length; i++) {
@@ -137,58 +141,135 @@ function createTrainingData(words) {
 
     return {
 
-        inputs: inputs,
+        inputs: tf.tensor3d(inputs),
 
-        labels: labels
+        labels: tf.tensor2d(labels)
     };
 }
 
 
-// Trainingstext vorbereiten
+// Modell erzeugen
 
-function prepareTrainingText() {
+function createModel() {
+
+    const newModel = tf.sequential();
+
+    newModel.add(
+
+        tf.layers.lstm({
+
+            units: 100,
+
+            returnSequences: true,
+
+            inputShape: [
+                sequenceLength,
+                dictionary.length
+            ]
+        })
+    );
+
+    newModel.add(
+
+        tf.layers.lstm({
+
+            units: 100
+        })
+    );
+
+    newModel.add(
+
+        tf.layers.dense({
+
+            units: dictionary.length,
+
+            activation: "softmax"
+        })
+    );
+
+    newModel.compile({
+
+        optimizer: tf.train.adam(0.001),
+
+        loss: "categoricalCrossentropy",
+
+        metrics: ["accuracy"]
+    });
+
+    return newModel;
+}
+
+
+// Modell trainieren
+
+async function trainModel() {
 
     const text =
         document
-            .getElementById("prompt-input")
+            .getElementById("training-text")
             .value;
 
     const words =
         splitIntoWords(text);
+
+    if (words.length <= sequenceLength) {
+
+        alert(
+            "Der Trainingstext ist zu kurz."
+        );
+
+        return;
+    }
 
     createDictionary(words);
 
     const trainingData =
         createTrainingData(words);
 
-    console.log(
-        "Anzahl Wörter:",
-        words.length
+    model = createModel();
+
+    document.getElementById(
+        "training-status"
+    ).textContent =
+        "Training läuft...";
+
+    await model.fit(
+
+        trainingData.inputs,
+
+        trainingData.labels,
+
+        {
+
+            epochs: 20,
+
+            batchSize: 32,
+
+            shuffle: true
+        }
     );
 
-    console.log(
-        "Dictionary:",
-        dictionary
-    );
+    document.getElementById(
+        "training-status"
+    ).textContent =
+        "Training abgeschlossen.";
 
     console.log(
-        "wordToIndex:",
-        wordToIndex
+        "Training abgeschlossen"
     );
 
-    console.log(
-        "indexToWord:",
-        indexToWord
-    );
+    trainingData.inputs.dispose();
 
-    console.log(
-        "Trainingsdaten:",
-        trainingData
-    );
+    trainingData.labels.dispose();
 }
 
 
 // Buttons
+
+const trainButton =
+    document.getElementById(
+        "train-button"
+    );
 
 const predictButton =
     document.getElementById(
@@ -216,7 +297,16 @@ const resetButton =
     );
 
 
-// Vorhersage
+trainButton.addEventListener(
+
+    "click",
+
+    async function () {
+
+        await trainModel();
+    }
+);
+
 
 predictButton.addEventListener(
 
@@ -224,16 +314,12 @@ predictButton.addEventListener(
 
     function () {
 
-        prepareTrainingText();
-
         console.log(
-            "Trainingssequenzen erstellt"
+            "Vorhersage folgt später."
         );
     }
 );
 
-
-// Platzhalter
 
 nextButton.addEventListener(
 
@@ -245,6 +331,7 @@ nextButton.addEventListener(
     }
 );
 
+
 autoButton.addEventListener(
 
     "click",
@@ -255,6 +342,7 @@ autoButton.addEventListener(
     }
 );
 
+
 stopButton.addEventListener(
 
     "click",
@@ -264,6 +352,7 @@ stopButton.addEventListener(
         console.log("Stopp");
     }
 );
+
 
 resetButton.addEventListener(
 
