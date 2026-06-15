@@ -12,6 +12,8 @@ let indexToWord = {};
 
 let model;
 
+let lossHistory = [];
+
 const sequenceLength = 3;
 
 
@@ -200,6 +202,46 @@ function createModel() {
 }
 
 
+// Loss-Verlauf plotten
+
+function plotLossHistory() {
+
+    const epochs = [];
+
+    for (let i = 0; i < lossHistory.length; i++) {
+
+        epochs.push(i + 1);
+    }
+
+    Plotly.newPlot(
+
+        "loss-plot",
+
+        [
+            {
+                x: epochs,
+                y: lossHistory,
+                mode: "lines",
+                type: "scatter",
+                name: "Loss"
+            }
+        ],
+
+        {
+            title: "Trainings-Loss",
+
+            xaxis: {
+                title: "Epoch"
+            },
+
+            yaxis: {
+                title: "Loss"
+            }
+        }
+    );
+}
+
+
 // Modell trainieren
 
 async function trainModel() {
@@ -228,6 +270,8 @@ async function trainModel() {
 
     model = createModel();
 
+    lossHistory = [];
+
     document.getElementById(
         "training-status"
     ).textContent =
@@ -245,7 +289,24 @@ async function trainModel() {
 
             batchSize: 32,
 
-            shuffle: true
+            shuffle: true,
+
+            callbacks: {
+
+                onEpochEnd: function(epoch, logs) {
+
+                    lossHistory.push(
+                        logs.loss
+                    );
+
+                    console.log(
+                        "Epoch:",
+                        epoch + 1,
+                        "Loss:",
+                        logs.loss
+                    );
+                }
+            }
         }
     );
 
@@ -253,6 +314,8 @@ async function trainModel() {
         "training-status"
     ).textContent =
         "Training abgeschlossen.";
+
+    plotLossHistory();
 
     console.log(
         "Training abgeschlossen"
