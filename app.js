@@ -14,6 +14,8 @@ let model;
 
 let lossHistory = [];
 
+let lastPredictions = [];
+
 const sequenceLength = 3;
 
 
@@ -202,7 +204,7 @@ function createModel() {
 }
 
 
-// Loss-Verlauf plotten
+// Loss plotten
 
 function plotLossHistory() {
 
@@ -228,6 +230,7 @@ function plotLossHistory() {
         ],
 
         {
+
             title: "Trainings-Loss",
 
             xaxis: {
@@ -298,13 +301,6 @@ async function trainModel() {
                     lossHistory.push(
                         logs.loss
                     );
-
-                    console.log(
-                        "Epoch:",
-                        epoch + 1,
-                        "Loss:",
-                        logs.loss
-                    );
                 }
             }
         }
@@ -317,13 +313,165 @@ async function trainModel() {
 
     plotLossHistory();
 
-    console.log(
-        "Training abgeschlossen"
-    );
-
     trainingData.inputs.dispose();
 
     trainingData.labels.dispose();
+}
+
+
+// Prompt in Tensor umwandeln
+
+function createInputFromPrompt(promptText) {
+
+    const words =
+        splitIntoWords(promptText);
+
+    if (words.length < sequenceLength) {
+
+        return null;
+    }
+
+    const lastWords =
+        words.slice(
+            words.length - sequenceLength
+        );
+
+    const inputSequence = [];
+
+    for (const word of lastWords) {
+
+        const index =
+            wordToIndex[word];
+
+        if (index === undefined) {
+
+            return null;
+        }
+
+        inputSequence.push(
+            createOneHotVector(index)
+        );
+    }
+
+    return tf.tensor3d(
+        [inputSequence]
+    );
+}
+
+
+// Vorhersage berechnen
+
+async function predictNextWords() {
+
+    if (model === undefined) {
+
+        alert(
+            "Bitte zuerst trainieren."
+        );
+
+        return;
+    }
+
+    const promptText =
+        document
+            .getElementById("prompt-input")
+            .value;
+
+    const inputTensor =
+        createInputFromPrompt(
+            promptText
+        );
+
+    if (inputTensor === null) {
+
+        alert(
+            "Mindestens drei bekannte Wörter eingeben."
+        );
+
+        return;
+    }
+
+    const predictionTensor =
+        model.predict(
+            inputTensor
+        );
+
+    const predictionValues =
+        await predictionTensor.data();
+
+    const predictions = [];
+
+    for (
+        let i = 0;
+        i < predictionValues.length;
+        i++
+    ) {
+
+        predictions.push({
+
+            word: indexToWord[i],
+
+            probability:
+                predictionValues[i]
+        });
+    }
+
+    predictions.sort(
+
+        function(a, b) {
+
+            return (
+                b.probability -
+                a.probability
+            );
+        }
+    );
+
+    lastPredictions =
+        predictions;
+
+    showPredictions(
+        predictions.slice(0, 10)
+    );
+
+    inputTensor.dispose();
+
+    predictionTensor.dispose();
+}
+
+
+// Vorhersagen anzeigen
+
+function showPredictions(predictions) {
+
+    const output =
+        document.getElementById(
+            "prediction-output"
+        );
+
+    output.innerHTML = "";
+
+    for (const prediction of predictions) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.className =
+            "prediction-item";
+
+        div.textContent =
+            prediction.word +
+            " (" +
+            (
+                prediction.probability
+                * 100
+            ).toFixed(2)
+            + "%)";
+
+        output.appendChild(div);
+    }
 }
 
 
@@ -375,11 +523,9 @@ predictButton.addEventListener(
 
     "click",
 
-    function () {
+    async function () {
 
-        console.log(
-            "Vorhersage folgt später."
-        );
+        await predictNextWords();
     }
 );
 
