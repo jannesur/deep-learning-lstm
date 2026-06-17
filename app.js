@@ -105,11 +105,7 @@ function createTrainingData(words) {
 
     const labels = [];
 
-    for (
-        let i = 0;
-        i < words.length - sequenceLength;
-        i++
-    ) {
+    for (let i = 0; i < words.length - sequenceLength; i++) {
 
         const inputWords =
             words.slice(
@@ -230,7 +226,6 @@ function plotLossHistory() {
         ],
 
         {
-
             title: "Trainings-Loss",
 
             xaxis: {
@@ -287,7 +282,6 @@ async function trainModel() {
         trainingData.labels,
 
         {
-
             epochs: 20,
 
             batchSize: 32,
@@ -401,11 +395,7 @@ async function predictNextWords() {
 
     const predictions = [];
 
-    for (
-        let i = 0;
-        i < predictionValues.length;
-        i++
-    ) {
+    for (let i = 0; i < predictionValues.length; i++) {
 
         predictions.push({
 
@@ -453,15 +443,15 @@ function showPredictions(predictions) {
 
     for (const prediction of predictions) {
 
-        const div =
+        const button =
             document.createElement(
-                "div"
+                "button"
             );
 
-        div.className =
+        button.className =
             "prediction-item";
 
-        div.textContent =
+        button.textContent =
             prediction.word +
             " (" +
             (
@@ -470,7 +460,69 @@ function showPredictions(predictions) {
             ).toFixed(2)
             + "%)";
 
-        output.appendChild(div);
+        button.addEventListener(
+
+            "click",
+
+            async function () {
+
+                addWordToPrompt(
+                    prediction.word
+                );
+
+                await predictNextWords();
+            }
+        );
+
+        output.appendChild(button);
+    }
+}
+
+
+// Wort an Prompt anhängen
+
+function addWordToPrompt(word) {
+
+    const promptInput =
+        document.getElementById(
+            "prompt-input"
+        );
+
+    let text =
+        promptInput.value.trim();
+
+    if (text.length === 0) {
+
+        promptInput.value =
+            word;
+
+    } else {
+
+        promptInput.value =
+            text + " " + word;
+    }
+}
+
+
+// Bestes Wort übernehmen
+
+async function acceptBestPrediction() {
+
+    if (lastPredictions.length === 0) {
+
+        await predictNextWords();
+    }
+
+    if (lastPredictions.length > 0) {
+
+        const bestWord =
+            lastPredictions[0].word;
+
+        addWordToPrompt(
+            bestWord
+        );
+
+        await predictNextWords();
     }
 }
 
@@ -534,9 +586,9 @@ nextButton.addEventListener(
 
     "click",
 
-    function () {
+    async function () {
 
-        console.log("Weiter");
+        await acceptBestPrediction();
     }
 );
 
