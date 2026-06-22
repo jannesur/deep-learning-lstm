@@ -16,6 +16,8 @@ let lossHistory = [];
 
 let lastPredictions = [];
 
+let autoRunning = false;
+
 const sequenceLength = 3;
 
 
@@ -269,6 +271,8 @@ async function trainModel() {
     model = createModel();
 
     lossHistory = [];
+
+    lastPredictions = [];
 
     document.getElementById(
         "training-status"
@@ -527,6 +531,39 @@ async function acceptBestPrediction() {
 }
 
 
+// Automatische Textgenerierung
+
+async function startAutoGeneration() {
+
+    autoRunning = true;
+
+    for (let i = 0; i < 10; i++) {
+
+        if (autoRunning === false) {
+
+            break;
+        }
+
+        await acceptBestPrediction();
+
+        await new Promise(function(resolve) {
+
+            setTimeout(resolve, 500);
+        });
+    }
+
+    autoRunning = false;
+}
+
+
+// Automatische Textgenerierung stoppen
+
+function stopAutoGeneration() {
+
+    autoRunning = false;
+}
+
+
 // Buttons
 
 const trainButton =
@@ -597,9 +634,9 @@ autoButton.addEventListener(
 
     "click",
 
-    function () {
+    async function () {
 
-        console.log("Auto");
+        await startAutoGeneration();
     }
 );
 
@@ -610,7 +647,7 @@ stopButton.addEventListener(
 
     function () {
 
-        console.log("Stopp");
+        stopAutoGeneration();
     }
 );
 
