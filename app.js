@@ -320,6 +320,8 @@ async function trainModel() {
 
     plotLossHistory();
 
+    calculateTopKAccuracy(words);
+
     trainingData.inputs.dispose();
 
     trainingData.labels.dispose();
@@ -602,6 +604,172 @@ function resetApplication() {
     document.getElementById(
         "prediction-output"
     ).innerHTML = "";
+}
+
+
+// Top-K Accuracy berechnen
+
+function calculateTopKAccuracy(words) {
+
+    let correctTop1 = 0;
+
+    let correctTop5 = 0;
+
+    let correctTop10 = 0;
+
+    let correctTop20 = 0;
+
+    let total = 0;
+
+    for (let i = 0; i < words.length - sequenceLength; i++) {
+
+        const inputWords =
+            words.slice(
+                i,
+                i + sequenceLength
+            );
+
+        const correctWord =
+            words[i + sequenceLength];
+
+        const prompt =
+            inputWords.join(" ");
+
+        const inputTensor =
+            createInputFromPrompt(prompt);
+
+        if (inputTensor === null) {
+
+            continue;
+        }
+
+        const predictionTensor =
+            model.predict(
+                inputTensor
+            );
+
+        const predictionValues =
+            predictionTensor.dataSync();
+
+        const predictions = [];
+
+        for (let j = 0; j < predictionValues.length; j++) {
+
+            predictions.push({
+
+                word: indexToWord[j],
+
+                probability:
+                    predictionValues[j]
+            });
+        }
+
+        predictions.sort(
+
+            function(a, b) {
+
+                return (
+                    b.probability -
+                    a.probability
+                );
+            }
+        );
+
+        const top1 =
+            predictions
+                .slice(0, 1)
+                .map(function(item) {
+
+                    return item.word;
+                });
+
+        const top5 =
+            predictions
+                .slice(0, 5)
+                .map(function(item) {
+
+                    return item.word;
+                });
+
+        const top10 =
+            predictions
+                .slice(0, 10)
+                .map(function(item) {
+
+                    return item.word;
+                });
+
+        const top20 =
+            predictions
+                .slice(0, 20)
+                .map(function(item) {
+
+                    return item.word;
+                });
+
+        if (top1.includes(correctWord)) {
+
+            correctTop1++;
+        }
+
+        if (top5.includes(correctWord)) {
+
+            correctTop5++;
+        }
+
+        if (top10.includes(correctWord)) {
+
+            correctTop10++;
+        }
+
+        if (top20.includes(correctWord)) {
+
+            correctTop20++;
+        }
+
+        total++;
+
+        inputTensor.dispose();
+
+        predictionTensor.dispose();
+    }
+
+    if (total === 0) {
+
+        return;
+    }
+
+    document.getElementById(
+        "accuracy-1"
+    ).textContent =
+        (
+            correctTop1 / total * 100
+        ).toFixed(2)
+        + "%";
+
+    document.getElementById(
+        "accuracy-5"
+    ).textContent =
+        (
+            correctTop5 / total * 100
+        ).toFixed(2)
+        + "%";
+
+    document.getElementById(
+        "accuracy-10"
+    ).textContent =
+        (
+            correctTop10 / total * 100
+        ).toFixed(2)
+        + "%";
+
+    document.getElementById(
+        "accuracy-20"
+    ).textContent =
+        (
+            correctTop20 / total * 100
+        ).toFixed(2)
+        + "%";
 }
 
 
