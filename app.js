@@ -251,6 +251,15 @@ async function trainModel() {
             .getElementById("training-text")
             .value;
 
+    if (text.trim().length === 0) {
+
+        alert(
+            "Bitte Trainingsdaten eingeben."
+        );
+
+        return;
+    }
+
     const words =
         splitIntoWords(text);
 
@@ -374,6 +383,15 @@ async function predictNextWords() {
         document
             .getElementById("prompt-input")
             .value;
+
+    if (promptText.trim().length === 0) {
+
+        alert(
+            "Bitte einen Text eingeben."
+        );
+
+        return;
+    }
 
     const inputTensor =
         createInputFromPrompt(
@@ -535,6 +553,11 @@ async function acceptBestPrediction() {
 
 async function startAutoGeneration() {
 
+    if (autoRunning === true) {
+
+        return;
+    }
+
     autoRunning = true;
 
     for (let i = 0; i < 10; i++) {
@@ -561,6 +584,24 @@ async function startAutoGeneration() {
 function stopAutoGeneration() {
 
     autoRunning = false;
+}
+
+
+// Anwendung zurücksetzen
+
+function resetApplication() {
+
+    autoRunning = false;
+
+    lastPredictions = [];
+
+    document.getElementById(
+        "prompt-input"
+    ).value = "";
+
+    document.getElementById(
+        "prediction-output"
+    ).innerHTML = "";
 }
 
 
@@ -658,6 +699,6 @@ resetButton.addEventListener(
 
     function () {
 
-        console.log("Reset");
+        resetApplication();
     }
 );
