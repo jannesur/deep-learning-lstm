@@ -142,7 +142,16 @@ ich lerne morgen tensorflow js
         <div class="text-box">
 
             <p>
-                Diskussion folgt nach Durchführung der Experimente.
+                Das Modell kann einfache sprachliche Muster aus den Trainingsdaten lernen.
+                Da nur ein kleiner Trainingsdatensatz verwendet wird, sind die Vorhersagen
+                aber stark von diesen Beispielsätzen abhängig. Besonders gut funktioniert
+                die Vorhersage, wenn der eingegebene Prompt ähnlich zu den Trainingssätzen ist.
+                Wörter, die nicht im Dictionary vorkommen, können vom Modell nicht sinnvoll
+                verarbeitet werden. Bei mehr Trainingsdaten würde das Modell wahrscheinlich
+                flexiblere und bessere Vorhersagen erzeugen. Gleichzeitig zeigt das Experiment,
+                dass ein Language Model kleine Trainingsdaten teilweise rekonstruieren kann.
+                Daraus kann ein Datenschutzproblem entstehen, wenn sensible Texte zum Training
+                verwendet werden.
             </p>
 
         </div>
@@ -158,14 +167,45 @@ ich lerne morgen tensorflow js
 
             <h3>Technisch</h3>
 
-            <p>
-                Dokumentation wird später ergänzt.
-            </p>
+            <ul>
+                <li>
+                    TensorFlow.js wird verwendet, um das LSTM-Modell direkt im Browser
+                    zu erstellen, zu trainieren und für Vorhersagen zu benutzen.
+                </li>
+
+                <li>
+                    Plotly.js wird verwendet, um den Trainings-Loss als Diagramm
+                    darzustellen.
+                </li>
+
+                <li>
+                    HTML, CSS und JavaScript werden für Aufbau, Gestaltung und Logik
+                    der Webanwendung verwendet.
+                </li>
+            </ul>
 
             <h3>Fachlich</h3>
 
             <p>
-                Dokumentation wird später ergänzt.
+                Der Trainingstext wird zuerst bereinigt und in einzelne Wörter zerlegt.
+                Danach wird aus allen vorkommenden Wörtern ein Dictionary erstellt.
+                Jedes Wort erhält eine eindeutige Nummer. Für das Training werden jeweils
+                drei aufeinanderfolgende Wörter als Eingabe verwendet. Das direkt folgende
+                Wort ist das Zielwort, das vom Modell vorhergesagt werden soll.
+            </p>
+
+            <p>
+                Die Wörter werden mit One-Hot-Encoding dargestellt. Das Modell besteht aus
+                zwei LSTM-Layern mit jeweils 100 Units und einer Dense-Ausgabeschicht mit
+                Softmax-Aktivierung. Als Loss-Funktion wird Categorical Crossentropy
+                verwendet. Optimiert wird mit Adam und einer Lernrate von 0.001.
+            </p>
+
+            <p>
+                Nach dem Training kann der Nutzer einen Prompt eingeben und die wahrscheinlichsten
+                nächsten Wörter anzeigen lassen. Der Nutzer kann ein Wort auswählen, mit dem
+                Weiter-Button das wahrscheinlichste Wort übernehmen oder mit dem Auto-Button
+                automatisch bis zu zehn Wörter generieren lassen.
             </p>
 
         </div>
