@@ -2,14 +2,20 @@
 <html lang="de">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>LSTM Word Prediction</title>
 
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
 </head>
 
 <body>
@@ -27,29 +33,34 @@
         <h2>Training</h2>
 
         <p id="training-status">
+
             Modell noch nicht trainiert.
+
         </p>
 
         <label for="training-text">
+
             Trainingsdaten:
+
         </label>
 
-        <textarea id="training-text" rows="8">ich gehe heute in die stadt
-ich gehe morgen zur arbeit
-ich esse heute ein broetchen
-ich esse morgen einen joghurt
-der hund läuft durch den park
-der vogel fliegt im himmel
-das wetter ist heute schön
-das wetter ist morgen schlecht
-ich lerne heute künstliche intelligenz
-ich lerne morgen tensorflow js
-</textarea>
+        <textarea
+                id="training-text"
+                rows="12">die geltende durchfuehrungsverordnung zum vereinsgesetz regelt mitteilungs und auskunftspflichten von auslaendervereinen und auslaendischen vereinen an die vereinsbehoerden der laender
+die verordnung enthaelt jedoch keine rechtsgrundlage fuer die verarbeitung personenbezogener daten oder sonstiger angaben die dem bundesverwaltungsamt als registerfuehrende stelle uebermittelt wurden
+mit dem entwurf werden entsprechende befugnisse unter beachtung der datenschutzrechtlichen erfordernisse geschaffen
+das auslaendervereinsregister wird beim bundesverwaltungsamt gefuehrt und gibt einen ueberblick ueber die in deutschland taetigen auslaendervereine und auslaendischen vereine
+es erleichtert die pruefung moeglicher vereinsverbote und dient dem zweck der praeventiven gefahrenabwehr
+um diesen zweck zu erreichen werden regelungen getroffen die insbesondere die vollstaendigkeit und aktualitaet des registers verbessern
+die uebertragung des pflichtenkatalogs in das vereinsgesetz folgt dem datenschutzrechtlichen erfordernis fuer die datenverarbeitung eine gesetzliche grundlage zu schaffen
+der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaendervereinsregisters systematisch einheitlich zu regeln</textarea>
 
         <br>
 
         <button id="train-button">
+
             Modell trainieren
+
         </button>
 
         <div id="loss-plot"></div>
@@ -62,38 +73,56 @@ ich lerne morgen tensorflow js
         <h2>Wortvorhersage</h2>
 
         <label for="prompt-input">
+
             Text eingeben:
+
         </label>
 
         <textarea
                 id="prompt-input"
                 rows="4"
-                placeholder="Text eingeben..."
-        ></textarea>
+                placeholder="Bitte mindestens drei bekannte Wörter eingeben..."></textarea>
 
         <div class="button-row">
 
             <button id="predict-button">
+
                 Vorhersage
+
             </button>
 
             <button id="next-button">
+
                 Weiter
+
             </button>
 
             <button id="auto-button">
+
                 Auto
+
             </button>
 
             <button id="stop-button">
+
                 Stopp
+
             </button>
 
             <button id="reset-button">
+
                 Reset
+
             </button>
 
         </div>
+
+        <p>
+
+            Hinweis:
+            Bitte nur Wörter verwenden, die im Trainingstext vorkommen.
+
+        </p>
 
         <h3>Vorhergesagte Wörter</h3>
 
@@ -111,23 +140,43 @@ ich lerne morgen tensorflow js
         <div class="result-box">
 
             <p>
+
                 Top-1 Accuracy:
+
                 <span id="accuracy-1">-</span>
+
             </p>
 
             <p>
+
                 Top-5 Accuracy:
+
                 <span id="accuracy-5">-</span>
+
             </p>
 
             <p>
+
                 Top-10 Accuracy:
+
                 <span id="accuracy-10">-</span>
+
             </p>
 
             <p>
+
                 Top-20 Accuracy:
+
                 <span id="accuracy-20">-</span>
+
+            </p>
+
+            <p>
+
+                Top-100 Accuracy:
+
+                <span id="accuracy-100">-</span>
+
             </p>
 
         </div>
@@ -142,16 +191,15 @@ ich lerne morgen tensorflow js
         <div class="text-box">
 
             <p>
+
                 Das Modell kann einfache sprachliche Muster aus den Trainingsdaten lernen.
-                Da nur ein kleiner Trainingsdatensatz verwendet wird, sind die Vorhersagen
-                aber stark von diesen Beispielsätzen abhängig. Besonders gut funktioniert
-                die Vorhersage, wenn der eingegebene Prompt ähnlich zu den Trainingssätzen ist.
-                Wörter, die nicht im Dictionary vorkommen, können vom Modell nicht sinnvoll
-                verarbeitet werden. Bei mehr Trainingsdaten würde das Modell wahrscheinlich
-                flexiblere und bessere Vorhersagen erzeugen. Gleichzeitig zeigt das Experiment,
-                dass ein Language Model kleine Trainingsdaten teilweise rekonstruieren kann.
-                Daraus kann ein Datenschutzproblem entstehen, wenn sensible Texte zum Training
-                verwendet werden.
+                Mit einem kleinen Trainingsdatensatz werden vor allem bereits bekannte
+                Satzstrukturen wiedergegeben. Bei längeren und vielfältigeren Texten verbessert
+                sich die Qualität der Vorhersagen. Das Experiment zeigt außerdem, dass ein
+                trainiertes Language Model Teile seiner Trainingsdaten rekonstruieren kann.
+                Daraus können Datenschutzprobleme entstehen, wenn sensible Texte verwendet
+                werden.
+
             </p>
 
         </div>
@@ -168,44 +216,64 @@ ich lerne morgen tensorflow js
             <h3>Technisch</h3>
 
             <ul>
+
                 <li>
-                    TensorFlow.js wird verwendet, um das LSTM-Modell direkt im Browser
-                    zu erstellen, zu trainieren und für Vorhersagen zu benutzen.
+
+                    TensorFlow.js wird verwendet, um das LSTM-Modell im Browser zu erstellen,
+                    zu trainieren und für Vorhersagen zu verwenden.
+
                 </li>
 
                 <li>
-                    Plotly.js wird verwendet, um den Trainings-Loss als Diagramm
-                    darzustellen.
+
+                    Plotly.js wird zur Visualisierung des Trainings-Loss genutzt.
+
                 </li>
 
                 <li>
-                    HTML, CSS und JavaScript werden für Aufbau, Gestaltung und Logik
-                    der Webanwendung verwendet.
+
+                    HTML, CSS und JavaScript bilden die Benutzeroberfläche sowie die
+                    Programmlogik der Anwendung.
+
                 </li>
+
             </ul>
 
             <h3>Fachlich</h3>
 
             <p>
-                Der Trainingstext wird zuerst bereinigt und in einzelne Wörter zerlegt.
-                Danach wird aus allen vorkommenden Wörtern ein Dictionary erstellt.
-                Jedes Wort erhält eine eindeutige Nummer. Für das Training werden jeweils
-                drei aufeinanderfolgende Wörter als Eingabe verwendet. Das direkt folgende
-                Wort ist das Zielwort, das vom Modell vorhergesagt werden soll.
+
+                Der Trainingstext wird zunächst bereinigt und in einzelne Wörter zerlegt.
+                Anschließend wird ein Dictionary erzeugt und jedes Wort per One-Hot-Encoding
+                dargestellt. Das Modell besteht aus zwei LSTM-Schichten mit jeweils
+                100 Units und einer Softmax-Ausgabeschicht.
+
             </p>
 
             <p>
-                Die Wörter werden mit One-Hot-Encoding dargestellt. Das Modell besteht aus
-                zwei LSTM-Layern mit jeweils 100 Units und einer Dense-Ausgabeschicht mit
-                Softmax-Aktivierung. Als Loss-Funktion wird Categorical Crossentropy
-                verwendet. Optimiert wird mit Adam und einer Lernrate von 0.001.
+
+                Für das Training werden immer drei aufeinanderfolgende Wörter verwendet,
+                um das jeweils nächste Wort vorherzusagen. Nach dem Training kann der Nutzer
+                Wörter vorhersagen lassen, automatisch Text generieren und die Accuracy
+                für verschiedene Top-k-Werte auswerten.
+
             </p>
 
             <p>
-                Nach dem Training kann der Nutzer einen Prompt eingeben und die wahrscheinlichsten
-                nächsten Wörter anzeigen lassen. Der Nutzer kann ein Wort auswählen, mit dem
-                Weiter-Button das wahrscheinlichste Wort übernehmen oder mit dem Auto-Button
-                automatisch bis zu zehn Wörter generieren lassen.
+
+                Als Trainingsdaten wurde ein bereinigter Ausschnitt einer
+                Bundestagsdrucksache verwendet. Der Text stammt aus den Open-Data-Angeboten
+                des Deutschen Bundestages und wurde für das lokale Training mit
+                TensorFlow.js gekürzt und vereinfacht.
+
+            </p>
+
+            <p>
+
+                Für die finale Lösung wurde eine Architektur mit zwei LSTM-Layern
+                zu je 100 Units gewählt. Diese entsprach der Aufgabenstellung und
+                lieferte bei den durchgeführten Tests stabile Ergebnisse.
+
             </p>
 
         </div>

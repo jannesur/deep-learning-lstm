@@ -277,11 +277,20 @@ async function trainModel() {
     const trainingData =
         createTrainingData(words);
 
+    if (model !== undefined) {
+
+        model.dispose();
+    }
+
     model = createModel();
 
     lossHistory = [];
 
     lastPredictions = [];
+
+    document.getElementById(
+        "prediction-output"
+    ).innerHTML = "";
 
     document.getElementById(
         "training-status"
@@ -326,7 +335,6 @@ async function trainModel() {
 
     trainingData.labels.dispose();
 }
-
 
 // Prompt in Tensor umwandeln
 
@@ -597,6 +605,21 @@ function resetApplication() {
 
     lastPredictions = [];
 
+    dictionary = [];
+
+    wordToIndex = {};
+
+    indexToWord = {};
+
+    lossHistory = [];
+
+    if (model !== undefined) {
+
+        model.dispose();
+
+        model = undefined;
+    }
+
     document.getElementById(
         "prompt-input"
     ).value = "";
@@ -604,20 +627,46 @@ function resetApplication() {
     document.getElementById(
         "prediction-output"
     ).innerHTML = "";
-}
 
+    document.getElementById(
+        "training-status"
+    ).textContent =
+        "Modell noch nicht trainiert.";
+
+    document.getElementById(
+        "accuracy-1"
+    ).textContent = "-";
+
+    document.getElementById(
+        "accuracy-5"
+    ).textContent = "-";
+
+    document.getElementById(
+        "accuracy-10"
+    ).textContent = "-";
+
+    document.getElementById(
+        "accuracy-20"
+    ).textContent = "-";
+
+    document.getElementById(
+        "accuracy-100"
+    ).textContent = "-";
+
+    Plotly.purge(
+        "loss-plot"
+    );
+}
 
 // Top-K Accuracy berechnen
 
 function calculateTopKAccuracy(words) {
 
     let correctTop1 = 0;
-
     let correctTop5 = 0;
-
     let correctTop10 = 0;
-
     let correctTop20 = 0;
+    let correctTop100 = 0;
 
     let total = 0;
 
@@ -636,7 +685,9 @@ function calculateTopKAccuracy(words) {
             inputWords.join(" ");
 
         const inputTensor =
-            createInputFromPrompt(prompt);
+            createInputFromPrompt(
+                prompt
+            );
 
         if (inputTensor === null) {
 
@@ -676,55 +727,43 @@ function calculateTopKAccuracy(words) {
         );
 
         const top1 =
-            predictions
-                .slice(0, 1)
-                .map(function(item) {
-
-                    return item.word;
-                });
+            predictions.slice(0, Math.min(1, predictions.length));
 
         const top5 =
-            predictions
-                .slice(0, 5)
-                .map(function(item) {
-
-                    return item.word;
-                });
+            predictions.slice(0, Math.min(5, predictions.length));
 
         const top10 =
-            predictions
-                .slice(0, 10)
-                .map(function(item) {
-
-                    return item.word;
-                });
+            predictions.slice(0, Math.min(10, predictions.length));
 
         const top20 =
-            predictions
-                .slice(0, 20)
-                .map(function(item) {
+            predictions.slice(0, Math.min(20, predictions.length));
 
-                    return item.word;
-                });
+        const top100 =
+            predictions.slice(0, Math.min(100, predictions.length));
 
-        if (top1.includes(correctWord)) {
+        if (top1.map(item => item.word).includes(correctWord)) {
 
             correctTop1++;
         }
 
-        if (top5.includes(correctWord)) {
+        if (top5.map(item => item.word).includes(correctWord)) {
 
             correctTop5++;
         }
 
-        if (top10.includes(correctWord)) {
+        if (top10.map(item => item.word).includes(correctWord)) {
 
             correctTop10++;
         }
 
-        if (top20.includes(correctWord)) {
+        if (top20.map(item => item.word).includes(correctWord)) {
 
             correctTop20++;
+        }
+
+        if (top100.map(item => item.word).includes(correctWord)) {
+
+            correctTop100++;
         }
 
         total++;
@@ -736,38 +775,32 @@ function calculateTopKAccuracy(words) {
 
     if (total === 0) {
 
+        document.getElementById("accuracy-1").textContent = "-";
+        document.getElementById("accuracy-5").textContent = "-";
+        document.getElementById("accuracy-10").textContent = "-";
+        document.getElementById("accuracy-20").textContent = "-";
+        document.getElementById("accuracy-100").textContent = "-";
+
         return;
     }
 
-    document.getElementById(
-        "accuracy-1"
-    ).textContent =
-        (
-            correctTop1 / total * 100
-        ).toFixed(2)
-        + "%";
+    document.getElementById("accuracy-1").textContent =
+        (correctTop1 / total * 100).toFixed(2) + "%";
+
+    document.getElementById("accuracy-5").textContent =
+        (correctTop5 / total * 100).toFixed(2) + "%";
+
+    document.getElementById("accuracy-10").textContent =
+        (correctTop10 / total * 100).toFixed(2) + "%";
+
+    document.getElementById("accuracy-20").textContent =
+        (correctTop20 / total * 100).toFixed(2) + "%";
 
     document.getElementById(
-        "accuracy-5"
+        "accuracy-100"
     ).textContent =
         (
-            correctTop5 / total * 100
-        ).toFixed(2)
-        + "%";
-
-    document.getElementById(
-        "accuracy-10"
-    ).textContent =
-        (
-            correctTop10 / total * 100
-        ).toFixed(2)
-        + "%";
-
-    document.getElementById(
-        "accuracy-20"
-    ).textContent =
-        (
-            correctTop20 / total * 100
+            correctTop100 / total * 100
         ).toFixed(2)
         + "%";
 }
