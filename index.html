@@ -192,13 +192,20 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
 
             <p>
 
-                Das Modell kann einfache sprachliche Muster aus den Trainingsdaten lernen.
-                Mit einem kleinen Trainingsdatensatz werden vor allem bereits bekannte
-                Satzstrukturen wiedergegeben. Bei längeren und vielfältigeren Texten verbessert
-                sich die Qualität der Vorhersagen. Das Experiment zeigt außerdem, dass ein
-                trainiertes Language Model Teile seiner Trainingsdaten rekonstruieren kann.
-                Daraus können Datenschutzprobleme entstehen, wenn sensible Texte verwendet
-                werden.
+                Das entwickelte Language Model konnte grundlegende sprachliche
+                Muster aus den verwendeten Trainingsdaten erkennen und für die
+                Wortvorhersage nutzen. Bei Eingaben, die dem Trainingstext ähneln,
+                liefert das Modell meist sinnvolle Vorhersagen. Da nur ein
+                begrenzter Ausschnitt einer Bundestagsdrucksache zum Training
+                verwendet wurde, treten bei der automatischen Textgenerierung
+                teilweise Wiederholungen häufiger Wörter auf. Dieses Verhalten ist
+                typisch für kleine Language Models mit einem vergleichsweise kleinen
+                Datensatz. Mit umfangreicheren und vielfältigeren Trainingsdaten
+                könnten die Vorhersagen weiter verbessert werden. Außerdem zeigt
+                das Experiment, dass ein trainiertes Language Model Teile seiner
+                Trainingsdaten wiedergeben kann. Deshalb sollten beim Training
+                grundsätzlich keine sensiblen oder personenbezogenen Daten
+                verwendet werden.
 
             </p>
 
@@ -219,21 +226,28 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
 
                 <li>
 
-                    TensorFlow.js wird verwendet, um das LSTM-Modell im Browser zu erstellen,
-                    zu trainieren und für Vorhersagen zu verwenden.
+                    TensorFlow.js wird verwendet, um das
+                    LSTM-Netzwerk direkt im Browser zu erstellen, zu trainieren
+                    und für die Wortvorhersage einzusetzen.
 
                 </li>
 
                 <li>
 
-                    Plotly.js wird zur Visualisierung des Trainings-Loss genutzt.
+                    Plotly.js dient zur Visualisierung des
+                    Trainings-Loss über die einzelnen Epochen.
 
                 </li>
 
                 <li>
 
-                    HTML, CSS und JavaScript bilden die Benutzeroberfläche sowie die
-                    Programmlogik der Anwendung.
+                    Die Anwendung wurde mit
+                    HTML,
+                    CSS und
+                    JavaScript
+                    umgesetzt. HTML bildet die Struktur der Oberfläche,
+                    CSS übernimmt die Gestaltung und JavaScript implementiert
+                    die Programmlogik.
 
                 </li>
 
@@ -243,36 +257,50 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
 
             <p>
 
-                Der Trainingstext wird zunächst bereinigt und in einzelne Wörter zerlegt.
-                Anschließend wird ein Dictionary erzeugt und jedes Wort per One-Hot-Encoding
-                dargestellt. Das Modell besteht aus zwei LSTM-Schichten mit jeweils
-                100 Units und einer Softmax-Ausgabeschicht.
+                Als Trainingsdaten wurde ein bereinigter Ausschnitt der
+                Bundestagsdrucksache 21/6805 verwendet. Der Text stammt aus
+                den Open-Data-Angeboten des Deutschen Bundestages und wurde
+                vor dem Training bereinigt sowie in einzelne Wörter zerlegt.
 
             </p>
 
             <p>
 
-                Für das Training werden immer drei aufeinanderfolgende Wörter verwendet,
-                um das jeweils nächste Wort vorherzusagen. Nach dem Training kann der Nutzer
-                Wörter vorhersagen lassen, automatisch Text generieren und die Accuracy
-                für verschiedene Top-k-Werte auswerten.
+                Aus allen vorkommenden Wörtern wird zunächst ein Dictionary
+                erstellt. Jedes Wort erhält einen eindeutigen Index und wird
+                anschließend mittels One-Hot-Encoding dargestellt. Für das
+                Training werden jeweils drei aufeinanderfolgende Wörter als
+                Eingabe verwendet, das vierte Wort dient als Zielwort.
 
             </p>
 
             <p>
 
-                Als Trainingsdaten wurde ein bereinigter Ausschnitt einer
-                Bundestagsdrucksache verwendet. Der Text stammt aus den Open-Data-Angeboten
-                des Deutschen Bundestages und wurde für das lokale Training mit
-                TensorFlow.js gekürzt und vereinfacht.
+                Das neuronale Netzwerk besteht aus zwei
+                LSTM-Schichten mit jeweils 100 Units sowie einer
+                Softmax-Ausgabeschicht. Als Verlustfunktion wird
+                Categorical Crossentropy verwendet. Optimiert wird mit einem
+                Adam-Optimizer und einer Lernrate von 0.001.
 
             </p>
 
             <p>
 
-                Für die finale Lösung wurde eine Architektur mit zwei LSTM-Layern
-                zu je 100 Units gewählt. Diese entsprach der Aufgabenstellung und
-                lieferte bei den durchgeführten Tests stabile Ergebnisse.
+                Nach dem Training kann der Nutzer einen Prompt eingeben und
+                die wahrscheinlichsten Folgewörter sowie die
+                Wahrscheinlichkeiten anzeigen lassen. Über den Button Weiter
+                wird das wahrscheinlichste Wort  übernommen. Der Auto-Button erzeugt
+                automatisch bis zu zehn weitere Wörter. Zusätzlich werden
+                die Top-1-, Top-5-, Top-10-, Top-20- und Top-100-Accuracy
+                berechnet und angezeigt.
+
+            </p>
+
+            <p>
+
+                <strong>Quelle der Trainingsdaten:</strong><br>
+
+                Deutscher Bundestag: https://dserver.bundestag.de/btd/21/068/2106805.pdf
 
             </p>
 

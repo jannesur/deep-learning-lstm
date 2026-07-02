@@ -336,6 +336,7 @@ async function trainModel() {
     trainingData.labels.dispose();
 }
 
+
 // Prompt in Tensor umwandeln
 
 function createInputFromPrompt(promptText) {
@@ -559,6 +560,61 @@ async function acceptBestPrediction() {
 }
 
 
+// Gewichtete Auswahl aus den Top-5
+
+async function acceptWeightedTopPrediction() {
+
+    if (lastPredictions.length === 0) {
+
+        await predictNextWords();
+    }
+
+    if (lastPredictions.length === 0) {
+
+        return;
+    }
+
+    const topPredictions =
+        lastPredictions.slice(0, 5);
+
+    let probabilitySum = 0;
+
+    for (const prediction of topPredictions) {
+
+        probabilitySum =
+            probabilitySum +
+            prediction.probability;
+    }
+
+    let randomValue =
+        Math.random() * probabilitySum;
+
+    let selectedWord =
+        topPredictions[0].word;
+
+    for (const prediction of topPredictions) {
+
+        randomValue =
+            randomValue -
+            prediction.probability;
+
+        if (randomValue <= 0) {
+
+            selectedWord =
+                prediction.word;
+
+            break;
+        }
+    }
+
+    addWordToPrompt(
+        selectedWord
+    );
+
+    await predictNextWords();
+}
+
+
 // Automatische Textgenerierung
 
 async function startAutoGeneration() {
@@ -577,7 +633,7 @@ async function startAutoGeneration() {
             break;
         }
 
-        await acceptBestPrediction();
+        await acceptWeightedTopPrediction();
 
         await new Promise(function(resolve) {
 
@@ -658,14 +714,19 @@ function resetApplication() {
     );
 }
 
+
 // Top-K Accuracy berechnen
 
 function calculateTopKAccuracy(words) {
 
     let correctTop1 = 0;
+
     let correctTop5 = 0;
+
     let correctTop10 = 0;
+
     let correctTop20 = 0;
+
     let correctTop100 = 0;
 
     let total = 0;
@@ -796,13 +857,8 @@ function calculateTopKAccuracy(words) {
     document.getElementById("accuracy-20").textContent =
         (correctTop20 / total * 100).toFixed(2) + "%";
 
-    document.getElementById(
-        "accuracy-100"
-    ).textContent =
-        (
-            correctTop100 / total * 100
-        ).toFixed(2)
-        + "%";
+    document.getElementById("accuracy-100").textContent =
+        (correctTop100 / total * 100).toFixed(2) + "%";
 }
 
 
