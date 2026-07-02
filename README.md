@@ -30,7 +30,6 @@ http://localhost:8000/
 https://jannesur.github.io/deep-learning-lstm/
 ```
 
-*(URL ggf. an den Namen deines Repositories anpassen.)*
 
 ## Technologien
 
