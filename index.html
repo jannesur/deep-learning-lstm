@@ -192,20 +192,23 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
 
             <p>
 
-                Das entwickelte Language Model konnte grundlegende sprachliche
-                Muster aus den verwendeten Trainingsdaten erkennen und für die
-                Wortvorhersage nutzen. Bei Eingaben, die dem Trainingstext ähneln,
-                liefert das Modell meist sinnvolle Vorhersagen. Da nur ein
-                begrenzter Ausschnitt einer Bundestagsdrucksache zum Training
-                verwendet wurde, treten bei der automatischen Textgenerierung
-                teilweise Wiederholungen häufiger Wörter auf. Dieses Verhalten ist
-                typisch für kleine Language Models mit einem vergleichsweise kleinen
-                Datensatz. Mit umfangreicheren und vielfältigeren Trainingsdaten
-                könnten die Vorhersagen weiter verbessert werden. Außerdem zeigt
-                das Experiment, dass ein trainiertes Language Model Teile seiner
-                Trainingsdaten wiedergeben kann. Deshalb sollten beim Training
-                grundsätzlich keine sensiblen oder personenbezogenen Daten
-                verwendet werden.
+                Das entwickelte Language Model konnte die Wortfolgen aus den
+                verwendeten Trainingsdaten gut lernen und für die
+                Wortvorhersage nutzen. Bei Eingaben, die dem Trainingstext
+                ähneln, liefert das Modell meist passende Vorschläge. Da nur
+                ein kleiner Ausschnitt einer Bundestagsdrucksache verwendet
+                wurde, kommt es bei der automatischen Textgenerierung
+                teilweise zu Wiederholungen. Mit einem größeren und
+                abwechslungsreicheren Datensatz würden die Vorhersagen
+                wahrscheinlich noch besser ausfallen. Die berechneten
+                Top-k-Accuracy-Werte zeigen außerdem, dass das richtige
+                nächste Wort häufig unter den ersten Vorhersagen liegt. Beim
+                Experimentieren wurde außerdem deutlich, dass das Modell
+                Teile des Trainingstextes wiedergeben kann. Deshalb sollten
+                für das Training keine sensiblen oder personenbezogenen Daten
+                verwendet werden. Insgesamt hat das Projekt gezeigt, wie ein
+                LSTM-Netzwerk für die Wortvorhersage und einfache
+                Textgenerierung eingesetzt werden kann.
 
             </p>
 
@@ -226,28 +229,25 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
 
                 <li>
 
-                    TensorFlow.js wird verwendet, um das
-                    LSTM-Netzwerk direkt im Browser zu erstellen, zu trainieren
-                    und für die Wortvorhersage einzusetzen.
+                    TensorFlow.js wird verwendet, um das LSTM-Netzwerk direkt
+                    im Browser zu erstellen, zu trainieren und für die
+                    Wortvorhersage einzusetzen.
 
                 </li>
 
                 <li>
 
-                    Plotly.js dient zur Visualisierung des
-                    Trainings-Loss über die einzelnen Epochen.
+                    Plotly.js dient zur Visualisierung des Trainings-Loss
+                    über die einzelnen Epochen.
 
                 </li>
 
                 <li>
 
-                    Die Anwendung wurde mit
-                    HTML,
-                    CSS und
-                    JavaScript
-                    umgesetzt. HTML bildet die Struktur der Oberfläche,
-                    CSS übernimmt die Gestaltung und JavaScript implementiert
-                    die Programmlogik.
+                    Die Anwendung wurde mit HTML, CSS und JavaScript
+                    umgesetzt. HTML bildet die Struktur der Oberfläche, CSS
+                    übernimmt die Gestaltung und JavaScript implementiert die
+                    Programmlogik.
 
                 </li>
 
@@ -276,23 +276,45 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
 
             <p>
 
-                Das neuronale Netzwerk besteht aus zwei
-                LSTM-Schichten mit jeweils 100 Units sowie einer
-                Softmax-Ausgabeschicht. Als Verlustfunktion wird
-                Categorical Crossentropy verwendet. Optimiert wird mit einem
-                Adam-Optimizer und einer Lernrate von 0.001.
+                Das neuronale Netzwerk besteht aus zwei LSTM-Schichten mit
+                jeweils 100 Units. Als Verlustfunktion wird Categorical
+                Crossentropy verwendet. Optimiert wird das Netzwerk mit dem
+                Adam-Optimizer und einer Lernrate von 0.001. Diese
+                Architektur entspricht der Aufgabenstellung und liefert für
+                den verwendeten Datensatz gute Ergebnisse.
 
             </p>
 
             <p>
 
                 Nach dem Training kann der Nutzer einen Prompt eingeben und
-                die wahrscheinlichsten Folgewörter sowie die
-                Wahrscheinlichkeiten anzeigen lassen. Über den Button Weiter
-                wird das wahrscheinlichste Wort  übernommen. Der Auto-Button erzeugt
-                automatisch bis zu zehn weitere Wörter. Zusätzlich werden
-                die Top-1-, Top-5-, Top-10-, Top-20- und Top-100-Accuracy
-                berechnet und angezeigt.
+                sich die wahrscheinlichsten Folgewörter mit ihren
+                Wahrscheinlichkeiten anzeigen lassen. Über den Button
+                <strong>Weiter</strong> wird das wahrscheinlichste Wort
+                übernommen. Mit dem Button <strong>Auto</strong> können
+                automatisch bis zu zehn weitere Wörter erzeugt werden. Der
+                Vorgang kann jederzeit mit <strong>Stopp</strong> beendet
+                werden. Mit <strong>Reset</strong> werden der eingegebene
+                Text und das trainierte Modell zurückgesetzt.
+
+            </p>
+
+            <p>
+
+                Nach jedem Training werden außerdem automatisch die
+                Top-1-, Top-5-, Top-10-, Top-20- und Top-100-Accuracy
+                berechnet und angezeigt. Dadurch lässt sich beurteilen, wie
+                häufig das richtige nächste Wort unter den
+                wahrscheinlichsten Vorhersagen liegt.
+
+            </p>
+
+            <p>
+
+                Das Experiment zeigt außerdem, dass ein trainiertes Language
+                Model Teile seiner Trainingsdaten wiedergeben kann. Deshalb
+                sollten zum Training keine sensiblen oder personenbezogenen
+                Daten verwendet werden.
 
             </p>
 
@@ -300,7 +322,8 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
 
                 <strong>Quelle der Trainingsdaten:</strong><br>
 
-                Deutscher Bundestag: https://dserver.bundestag.de/btd/21/068/2106805.pdf
+                Deutscher Bundestag:
+                https://dserver.bundestag.de/btd/21/068/2106805.pdf
 
             </p>
 
