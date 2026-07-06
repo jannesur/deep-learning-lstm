@@ -193,29 +193,32 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
             <p>
 
                 Das entwickelte Language Model konnte die Wortfolgen aus den
-                verwendeten Trainingsdaten lernen und für die
-                Wortvorhersage nutzen. Bei Eingaben, die dem Trainingstext
-                ähneln, liefert das Modell meist passende Vorschläge. Da nur
-                ein kleiner Ausschnitt einer Bundestagsdrucksache verwendet
-                wurde, kommt es bei der automatischen Textgenerierung
-                teilweise zu Wiederholungen. Mit einem größeren und
-                abwechslungsreicheren Datensatz würden die Vorhersagen
-                wahrscheinlich noch besser ausfallen. Die berechneten
-                Top-k-Accuracy-Werte zeigen außerdem, dass das richtige
-                nächste Wort häufig unter den ersten Vorhersagen liegt. Es wurde
-                außerdem deutlich, dass das Modell
-                Teile des Trainingstextes wiedergeben kann. Deshalb sollten
-                für das Training keine sensiblen oder personenbezogenen Daten
-                verwendet werden. Insgesamt hat das Projekt gezeigt, wie ein
-                LSTM-Netzwerk für die Wortvorhersage und einfache
-                Textgenerierung eingesetzt werden kann.
+                verwendeten Trainingsdaten lernen und für die Wortvorhersage
+                nutzen. Bei Eingaben, die dem Trainingstext ähneln, liefert das
+                Modell meist passende Vorschläge. Da nur ein kleiner Ausschnitt
+                einer Bundestagsdrucksache verwendet wurde, kommt es bei der
+                automatischen Textgenerierung teilweise zu Wiederholungen. Da
+                das Wort „die“ im verwendeten Trainingstext besonders häufig
+                vorkommt, wird es vom Modell oft mit der höchsten
+                Wahrscheinlichkeit vorhergesagt. Dadurch entstehen
+                insbesondere bei der Funktion Weiter, die
+                immer das wahrscheinlichste Wort übernimmt, teilweise
+                Wiederholungen. Mit einem größeren und abwechslungsreicheren
+                Datensatz würden die Vorhersagen wahrscheinlich noch besser
+                ausfallen. Die berechneten Top-k-Accuracy-Werte zeigen
+                außerdem, dass das richtige nächste Wort häufig unter den
+                ersten Vorhersagen liegt. Es wurde außerdem deutlich, dass das
+                Modell Teile des Trainingstextes wiedergeben kann. Deshalb
+                sollten für das Training keine sensiblen oder
+                personenbezogenen Daten verwendet werden. Insgesamt hat das
+                Projekt gezeigt, wie ein LSTM-Netzwerk für die Wortvorhersage
+                und einfache Textgenerierung eingesetzt werden kann.
 
             </p>
 
         </div>
 
     </section>
-
 
     <section>
 
@@ -231,14 +234,14 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
 
                     TensorFlow.js wird verwendet, um das LSTM-Netzwerk direkt
                     im Browser zu erstellen, zu trainieren und für die
-                    Wortvorhersage einzusetzen
+                    Wortvorhersage einzusetzen.
 
                 </li>
 
                 <li>
 
                     Plotly.js dient zur Visualisierung des Trainings-Loss
-                    über die einzelnen Epochen
+                    über die einzelnen Epochen.
 
                 </li>
 
@@ -247,7 +250,7 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
                     Die Anwendung wurde mit HTML, CSS und JavaScript
                     umgesetzt. HTML bildet die Struktur der Oberfläche, CSS
                     übernimmt die Gestaltung und JavaScript implementiert die
-                    Programmlogik
+                    Programmlogik.
 
                 </li>
 
@@ -270,7 +273,7 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
                 erstellt. Jedes Wort erhält einen eindeutigen Index und wird
                 anschließend mittels One-Hot-Encoding dargestellt. Für das
                 Training werden jeweils drei aufeinanderfolgende Wörter als
-                Eingabe verwendet, das vierte Wort dient als Zielwort.
+                Eingabe verwendet und das vierte Wort dient als Zielwort.
 
             </p>
 
@@ -280,8 +283,8 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
                 jeweils 100 Units. Als Verlustfunktion wird Categorical
                 Crossentropy verwendet. Optimiert wird das Netzwerk mit dem
                 Adam-Optimizer und einer Lernrate von 0.001. Diese
-                Architektur entspricht der Aufgabenstellung und liefert für
-                den verwendeten Datensatz gute Ergebnisse.
+                Architektur liefert gute Ergebnisse für
+                den verwendeten Datensatz.
 
             </p>
 
@@ -290,12 +293,13 @@ der regelungsvorschlag dient ausserdem dazu den gesamten komplex des auslaenderv
                 Nach dem Training kann der Nutzer einen Prompt eingeben und
                 sich die wahrscheinlichsten Folgewörter mit ihren
                 Wahrscheinlichkeiten anzeigen lassen. Über den Button
-                Weiter wird das wahrscheinlichste Wort
-                übernommen. Mit dem Button Auto können
-                automatisch bis zu zehn weitere Wörter erzeugt werden. Der
-                Vorgang kann jederzeit mit Stopp beendet
-                werden. Mit Reset werden der eingegebene
-                Text und das trainierte Modell zurückgesetzt.
+                Weiter wird immer das wahrscheinlichste
+                vorhergesagte Wort übernommen. Mit dem Button
+                Auto können automatisch bis zu zehn weitere
+                Wörter erzeugt werden. Der Vorgang kann mit
+                Stopp beendet werden. Mit
+                Reset werden der eingegebene Text und das
+                trainierte Modell zurückgesetzt.
 
             </p>
 
